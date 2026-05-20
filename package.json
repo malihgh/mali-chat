@@ -1,0 +1,25 @@
+{
+  "name": "mali-chat",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "turbo": "^2.9.14"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:mobile": "bun --cwd apps/mobile run dev",
+    "dev:api": "bun --cwd apps/api run dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
+  }
+}
