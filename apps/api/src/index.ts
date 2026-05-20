@@ -1,11 +1,16 @@
 import express from "express";
-import http from "http";
+import http from "node:http";
 import cors from "cors";
 import { Server, Socket } from "socket.io";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+    methods: ["GET", "POST"],
+  }),
+);
 app.use(express.json());
 
 const server = http.createServer(app);
