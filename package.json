@@ -12,6 +12,7 @@
     "packages/*"
   ],
   "scripts": {
+    "predev": "bun scripts/check-node-modules.ts",
     "dev": "turbo run dev",
     "dev:mobile": "bun --cwd apps/mobile run dev",
     "dev:api": "bun --cwd apps/api run dev",
