@@ -16,8 +16,7 @@
     "dev:mobile": "bun --cwd apps/mobile run dev",
     "dev:api": "bun --cwd apps/api run dev",
     "build": "turbo build",
-    "lint": "turbo lint",
-    "ios": "npx expo run:ios --simulator='iPhone SE (3rd generation)'"
+    "lint": "turbo lint"
   },
   "dependencies": {
     "cors": "^2.8.6",
