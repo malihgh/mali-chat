@@ -1,12 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  FlatList,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TextInput, Button, FlatList, StyleSheet } from "react-native";
 import { io } from "socket.io-client";
 
 const socket = io("http://192.168.1.147:3000", {
@@ -26,9 +19,7 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const handleMessage = (
-      payload: string | { user: string; text: string },
-    ) => {
+    const handleMessage = (payload: string | { user: string; text: string }) => {
       console.log("Received:", payload);
 
       const formattedMessage: Message =
@@ -87,14 +78,23 @@ export default function App() {
     setMessage("");
   }, [message]);
 
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View style={styles.messageContainer}>
-      <Text style={styles.username}>
-        {item.user === "SYSTEM" ? "🔔 SYSTEM" : item.user}
-      </Text>
-      <Text>{item.text}</Text>
-    </View>
-  );
+  const renderMessage = ({ item }: { item: Message }) => {
+    const messageClassName =
+      item.user === "SYSTEM"
+        ? "flex mb-3 p-3 rounded-lg items-center bg-transparent"
+        : item.user === username
+          ? "flex mb-3 p-3 rounded-lg items-end bg-blue-200"
+          : "flex mb-3 p-3 rounded-lg items-start bg-gray-300";
+
+    return (
+      <View className={messageClassName}>
+        <Text style={styles.username}>
+          {item.user === "SYSTEM" ? "🔔 SYSTEM" : item.user}
+        </Text>
+        <Text>{item.text}</Text>
+      </View>
+    );
+  };
 
   if (!joined) {
     return (
