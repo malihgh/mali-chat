@@ -1,112 +1,168 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, TextInput, Button, FlatList, StyleSheet } from "react-native";
+import { io } from "socket.io-client";
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+const socket = io("http://192.168.1.147:3000", {
+  autoConnect: true,
+});
 
-export default function TabTwoScreen() {
+type Message = {
+  id: string;
+  user: string;
+  text: string;
+};
+
+export default function App() {
+  const [username, setUsername] = useState("");
+  const [joined, setJoined] = useState(false);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    const handleMessage = (payload: string | { user: string; text: string }) => {
+      console.log("Received:", payload);
+
+      const formattedMessage: Message =
+        typeof payload === "string"
+          ? {
+              id: Date.now().toString(),
+              user: "Unknown",
+              text: payload,
+            }
+          : {
+              id: `${Date.now()}-${Math.random()}`,
+              user: payload.user,
+              text: payload.text,
+            };
+
+      setMessages((prev) => [...prev, formattedMessage]);
+    };
+
+    const handleSystem = (msg: string) => {
+      console.log("System:", msg);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `${Date.now()}-system`,
+          user: "SYSTEM",
+          text: msg,
+        },
+      ]);
+    };
+
+    socket.on("message", handleMessage);
+    socket.on("system", handleSystem);
+
+    return () => {
+      socket.off("message", handleMessage);
+      socket.off("system", handleSystem);
+    };
+  }, []);
+
+  const joinChat = useCallback(() => {
+    const trimmedUsername = username.trim();
+
+    if (!trimmedUsername) return;
+
+    socket.emit("join", trimmedUsername);
+    setJoined(true);
+  }, [username]);
+
+  const sendMessage = useCallback(() => {
+    const trimmedMessage = message.trim();
+
+    if (!trimmedMessage) return;
+
+    socket.emit("message", trimmedMessage);
+    setMessage("");
+  }, [message]);
+
+  const renderMessage = ({ item }: { item: Message }) => {
+    const messageClassName =
+      item.user === "SYSTEM"
+        ? "flex mb-3 p-3 rounded-lg items-center bg-transparent"
+        : item.user === username
+          ? "flex mb-3 p-3 rounded-lg items-end bg-blue-200"
+          : "flex mb-3 p-3 rounded-lg items-start bg-gray-300";
+
+    return (
+      <View className={messageClassName}>
+        <Text style={styles.username}>
+          {item.user === "SYSTEM" ? "🔔 SYSTEM" : item.user}
+        </Text>
+        <Text>{item.text}</Text>
+      </View>
+    );
+  };
+
+  if (!joined) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Enter username</Text>
+
+        <TextInput
+          value={username}
+          onChangeText={setUsername}
+          placeholder="Your username"
+          style={styles.input}
+        />
+
+        <Button title="Join Chat" onPress={joinChat} />
+      </View>
+    );
+  }
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}>
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <FlatList
+        data={messages}
+        keyExtractor={(item) => item.id}
+        renderItem={renderMessage}
+        contentContainerStyle={styles.list}
+      />
+
+      <TextInput
+        value={message}
+        onChangeText={setMessage}
+        placeholder="Type a message..."
+        style={styles.input}
+      />
+
+      <Button title="Send" onPress={sendMessage} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
+  container: {
+    flex: 1,
+    padding: 20,
+    paddingTop: 60,
   },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
+  title: {
+    fontSize: 18,
+    marginBottom: 10,
+    fontWeight: "600",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    padding: 12,
+    marginVertical: 10,
+  },
+  list: {
+    paddingBottom: 20,
+  },
+  messageContainer: {
+    marginBottom: 12,
+    padding: 10,
+    backgroundColor: "#f4f4f4",
+    borderRadius: 8,
+  },
+  username: {
+    fontWeight: "bold",
+    marginBottom: 4,
   },
 });
