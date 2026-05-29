@@ -1,23 +1,19 @@
 import { View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Icon from "@/components/ui/Icon";
 import Text from "../ui/Text";
 import Button from "../ui/Button";
 import { useState } from "react";
 import SearchBar from "./components/SearchBar";
 import ChatList from "./components/ChatList";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Messages = () => {
-  const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
 
   return (
-    <View className="mx-3">
+    <SafeAreaView className="mx-3">
       {/* header */}
-      <View
-        className="flex-row justify-between items-center"
-        style={{ paddingTop: insets.top }}
-      >
+      <View className="flex-row justify-between items-center">
         <View className="flex-1">
           <Button title="Edit" buttonTypes="flat" />
         </View>
@@ -37,7 +33,7 @@ const Messages = () => {
       <SearchBar text={searchText} setText={setSearchText} />
 
       <ChatList />
-    </View>
+    </SafeAreaView>
   );
 };
 
