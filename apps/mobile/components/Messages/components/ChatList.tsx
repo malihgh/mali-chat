@@ -27,7 +27,7 @@ const ChatItem = memo(({ item }: ChatItemProps) => {
       className="flex-row items-center gap-4"
       onPress={() => {
         router.push({
-          pathname: "/(tabs)/(chats)/chat",
+          pathname: "/chat/[id]",
           params: {
             id,
             name,

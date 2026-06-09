@@ -149,7 +149,7 @@ const ChatHeader = ({
 }) => {
   const goToProfile = () => {
     router.push({
-      pathname: "/(tabs)/(chats)/userInfo",
+      pathname: "/userInfo/[id]",
       params: { id, name: user.name },
     });
   };

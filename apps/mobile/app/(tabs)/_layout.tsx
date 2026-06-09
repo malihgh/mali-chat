@@ -20,10 +20,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => <Icon size={28} name="home" color={color} />,
+          title: "Messages",
+          tabBarIcon: ({ color }) => <Icon name="chatbubbles" size={24} color={color} />,
         }}
       />
+
       <Tabs.Screen
         name="explore"
         options={{
@@ -32,10 +33,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(chats)"
+        name="setting"
         options={{
-          title: "Messages",
-          tabBarIcon: ({ color }) => <Icon name="chatbubbles" size={24} color={color} />,
+          title: "Home",
+          tabBarIcon: ({ color }) => <Icon size={28} name="home" color={color} />,
         }}
       />
     </Tabs>
