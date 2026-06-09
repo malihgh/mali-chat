@@ -1,7 +1,8 @@
 import { memo } from "react";
 import Text from "@/components/ui/Text";
-import { View, Image, FlatList, ListRenderItem, Pressable } from "react-native";
+import { View, FlatList, ListRenderItem, Pressable } from "react-native";
 import { useRouter } from "expo-router";
+import Avatar from "./Avatar";
 
 export type ChatDataType = {
   id: number;
@@ -14,28 +15,6 @@ export type ChatDataType = {
 
 type ChatItemProps = {
   item: ChatDataType;
-};
-
-const colors = [
-  "#E57373", // red
-  "#F4A261", // orange
-  "#EAB308", // amber
-  "#2DD4BF", // green
-  "#3B82F6", // blue
-  "#8B5CF6", // purple
-  "#EC4899", // pink
-  "#16A34A", // emerald
-];
-
-const getAvatarColor = (name = "") => {
-  let hash = 0;
-
-  for (let i = 0; i < name.length; i++) {
-    hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  }
-
-  const index = Math.abs(hash) % colors.length;
-  return colors[index];
 };
 
 const ChatItem = memo(({ item }: ChatItemProps) => {
@@ -51,24 +30,13 @@ const ChatItem = memo(({ item }: ChatItemProps) => {
           pathname: "/(tabs)/(chats)/chat",
           params: {
             id,
-            name: name,
+            name,
+            avatar,
           },
         });
       }}
     >
-      {/* Avatar */}
-      <View
-        className="w-16 h-16 rounded-full items-center justify-center overflow-hidden"
-        style={{ backgroundColor: getAvatarColor(name) }}
-      >
-        {avatar ? (
-          <Image source={{ uri: avatar }} className="w-16 h-16 rounded-full" />
-        ) : (
-          <Text type="sub1" className="text-white">
-            {name?.charAt(0)?.toUpperCase()}
-          </Text>
-        )}
-      </View>
+      <Avatar name={name} avatar={avatar} size={50} />
 
       {/* Content */}
       <View className="flex-1 pt-2">
