@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import Icon from "@/components/ui/Icon";
 import Text from "../ui/Text";
 import Button from "../ui/Button";
@@ -15,7 +15,9 @@ const Messages = () => {
       {/* header */}
       <View className="flex-row justify-between items-center">
         <View className="flex-1">
-          <Button title="Edit" buttonTypes="flat" />
+          <Pressable className="bg-gray-200 px-3 py-3 rounded-xl self-start">
+            <Text type="label">Edit</Text>
+          </Pressable>
         </View>
 
         <View className="flex-1 items-center">
