@@ -15,7 +15,7 @@
     "predev": "bun scripts/check-node-modules.ts",
     "dev": "turbo run dev",
     "dev:mobile": "bun --cwd apps/mobile run dev",
-    "dev:api": "bun --cwd apps/api run dev",
+    "dev:backend": "bun --cwd apps/backend run dev",
     "build": "turbo build",
     "lint": "turbo lint"
   },
@@ -38,7 +38,7 @@
     "expo-symbols": "~1.0.8",
     "expo-system-ui": "~6.0.9",
     "expo-web-browser": "~15.0.10",
-    "express": "^5.2.1",
+    "fastify": "^5.8.5",
     "nativewind": "^4.2.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",
@@ -56,14 +56,13 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "turbo": "^2.9.14",
     "@types/react": "~19.1.0",
-    "typescript": "~5.9.2",
+    "babel-preset-expo": "^55.0.22",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
-    "babel-preset-expo": "^55.0.22",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^3.4.17",
+    "turbo": "^2.9.14",
+    "typescript": "~5.9.2"
   }
 }
